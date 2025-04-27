@@ -12,10 +12,15 @@ This repository contains the R-Scripts used to prepare and analyse the data.
 
 The study used RStudio Version 4.3.2. For the formulation of the linear mixed models, we used the lme-function of the nlme package within R that allows the fit and comparison of linear and non-linear mixed effects models. All coefficients were subject to a significance analysis assuming an alpha-level of 5%. 
 
-Structure of the Code: 
+Structure of the Code:
+
 BISQPrep.R contains the Code used to clean and prepare the BISQ data for the modelling process. 
+
 ActiPrep.R contains the Code used to clean and prepare the Actigraphy data for the modelling process. 
+
 CESDPrep.R contains the Code used to clean and prepare the CESD data for the moderation analysis.
+
 Deviations_BISQ_Acti.R contains the Code used to calculate and plot the deviations between the planned and real assessment timepoints in the study. 
+
 LMM+Moderation_Script contains the formulation of the linear mixed models, the correlation of the parameters and the moderation analysis. 
 
