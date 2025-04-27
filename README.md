@@ -1,10 +1,16 @@
 Code for my Masterthesis Analysis
+
 Janna Pauline Dirks
+
 1. Supervisor: Dr. Katharina Pittner
-Freie Universität Berlin
+   
 Master of Cognitive Neuroscience (MCNB)
+
+Freie Universität Berlin
+
 Titel: Infant sleep trajectoires across the first year of life: Comparing Actigraphy and BISQ 
-Berlin, April, 2025
+
+Berlin, April 2025
 
 This is the GitHub repository for the Master's thesis conducted as part of the Cognitive Neuroscience program at Freie Universität Berlin. The thesis investigates the Assesment of infant sleep trajectories over the first year of life, with a focus on comparing the trajectories of linear mixed models created based on BISQ and actigraphy data. Furthermore, I conducted a moderation analysis to investigate a possible moderating effect of maternal depression onto the association between the BISQ and actigraphy data. 
 
