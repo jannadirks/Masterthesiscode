@@ -1,14 +1,15 @@
 Code for my Masterthesis Analysis
 
-Janna Pauline Dirks
+Titel: Infant sleep trajectoires across the first year of life: Comparing Actigraphy and BISQ 
 
 1. Supervisor: Dr. Katharina Pittner
+2. Supervisor: Prof. Dr. Felix Blankenburg
    
+Author: Janna Pauline Dirks 
+
 Master of Cognitive Neuroscience (MCNB)
 
 Freie Universität Berlin
-
-Titel: Infant sleep trajectoires across the first year of life: Comparing Actigraphy and BISQ 
 
 Berlin, April 2025
 
