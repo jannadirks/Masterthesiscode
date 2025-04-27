@@ -1,4 +1,3 @@
-#Broken Stick Model 
 
 #Clear working environment
 rm(list = ls())
@@ -6,18 +5,22 @@ rm(list = ls())
 #set wd 
 setwd("C:/Users/janna/Documents/Masterthesis/Abweichungen")
 
-#Read in data
+#Actigraphy data 
+#Read in data for Actigraphy and birthdates
 df<- read.table('Acti_Average_withDates.csv', header = TRUE, sep = ';')
 Actidates <- data.frame(df$Maternal_ID, df$Date_M1_Acti,df$Date_M3_Acti, df$Date_M6_Acti, df$Date_M9_Acti, df$Date_M12)
 df2 <- read.table("Daten_ACTI.csv", header = TRUE, sep = ';')
 df2 <- df2[-nrow(df2), ]
-Actidates$birth <- df2$birth
+
+# add in the birth date 
+Actidates$birth <- df2$birth 
 Actidates[Actidates == 0] <- NA
-# Umbenennen der Spalten
+
+# changes column names 
 colnames(Actidates) <- c("maternal_id", "ACTI_Date_M1", "ACTI_Date_M3", "ACTI_Date_M6", "ACTI_Date_M9", "ACTI_Date_M12", "birth")
 
 
-# Schritt 1: Umwandeln der Spalte in ein Datumsobjekt (vorausgesetzt, die Spalte ist im Format "YYYY-MM-DD")
+# Changes dates into dd.mm.yyyy format 
 Actidates$birth <- as.Date(Actidates$birth, "%d.%m.%Y")
 Actidates$ACTI_Date_M1 <- as.Date(Actidates$ACTI_Date_M1, "%d.%m.%Y")
 Actidates$ACTI_Date_M3 <- as.Date(Actidates$ACTI_Date_M3, "%d.%m.%Y")
@@ -26,7 +29,7 @@ Actidates$ACTI_Date_M9 <- as.Date(Actidates$ACTI_Date_M9, "%d.%m.%Y")
 Actidates$ACTI_Date_M12 <- as.Date(Actidates$ACTI_Date_M12, "%d.%m.%Y")
 
 
-#abziehen voneinander 
+#substract birth date from dates of assessments to get age in days at assessment timepoint
 #Actidates$diffbirth <- Actidates$birth - Actidates$birth
 Actidates$diffM1 <- Actidates$ACTI_Date_M1 - Actidates$birth
 Actidates$diffM3 <- Actidates$ACTI_Date_M3 - Actidates$birth
@@ -38,25 +41,21 @@ Actidates$diffM12 <- Actidates$ACTI_Date_M12 - Actidates$birth
 library(dplyr)
 library(tidyr)
 
-# Konvertieren Sie die Zeitdifferenzen in numerische Werte und entfernen Sie die "days"
-convert_to_days <- function(x) {
-  as.numeric(gsub(" days", "", x))
-}
-
-# Die Zeitdifferenzen in numerische Werte umwandeln und in langes Format bringen
+#turn days into a numeric value and add them into the long format actirgaphy data
 long_Actidates <- Actidates %>%
   mutate(across(starts_with("diff"), ~ replace(., is.na(.), NA))) %>%
   pivot_longer(cols = starts_with("diff"), 
                names_to = "diff_type", 
                values_to = "daysA") %>%
-  mutate(days = as.numeric(daysA))  # Konvertieren in numerisch
+  mutate(days = as.numeric(daysA))  
 
+#turn maternal id into factor 
 long_Actidates$maternal_id <- factor(long_Actidates$maternal_id)
-long_Actidates_clean <- na.omit(long_Actidates)#delete NAs
+long_Actidates_clean <- na.omit(long_Actidates)
 
 library(ggplot2)
 
-# Abacus-Plot erstellen
+# Create plot of deviations based on Actigraphy data 
 ggplot(long_Actidates, aes(x = daysA , y = maternal_id)) +
   geom_point(color = "red") + 
   labs(title = "Deviation of Actigraphy Data", 
@@ -80,17 +79,16 @@ ggsave("abacus_plot_ACTIS.png", width = 10, height = 15)
 #Read in data
 BISQdates<- read.table('BQIS_DATES_selected.csv', header = TRUE, sep = ';')
 
-# Umwandeln ins Wide Format
+#wide format 
 BISQ_wide <- BISQdates %>%
   pivot_wider(names_from = redcap_event_name, values_from = bisq_date)
 
 BISQ_wide$birth <- Actidates$birth
-# Spaltennamen umbenennen: "m1_arm_1" zu "M1", "m3_arm_1" zu "M3" usw.
+# changes colnames
 colnames(BISQ_wide) <- gsub(pattern = "m(\\d+)_arm_1", replacement = "M\\1", colnames(BISQ_wide))
-# Spalte "m12a_arm_1" in "M12" umbenennen
 colnames(BISQ_wide)[colnames(BISQ_wide) == "m12a_arm_1"] <- "M12"
 
-#Umwandeln der Spalte in ein Datumsobjekt 
+#save dates of assessment in date format 
 BISQ_wide$birth <- as.Date(BISQ_wide$birth, "%d.%m.%Y")
 BISQ_wide$M1 <- as.Date(BISQ_wide$M1, "%d.%m.%Y")
 BISQ_wide$M3 <- as.Date(BISQ_wide$M3, "%d.%m.%Y")
@@ -98,7 +96,7 @@ BISQ_wide$M6 <- as.Date(BISQ_wide$M6, "%d.%m.%Y")
 BISQ_wide$M9 <- as.Date(BISQ_wide$M9, "%d.%m.%Y")
 BISQ_wide$M12 <- as.Date(BISQ_wide$M12, "%d.%m.%Y")
 
-#abziehen voneinander 
+#calculate age at assessment timepoint 
 #BISQ_wide$diffbirth <- BISQ_wide$birth - BISQ_wide$birth
 BISQ_wide$diffM1 <- BISQ_wide$M1 - BISQ_wide$birth
 BISQ_wide$diffM3 <- BISQ_wide$M3 - BISQ_wide$birth
@@ -115,10 +113,11 @@ long_BISQ <- BISQ_wide %>%
                values_to = "daysF") %>%
   mutate(days = as.numeric(daysF))  # Konvertieren in numerisch
 
+#save maternal ID as a factor
 long_BISQ$maternal_id <- factor(long_BISQ$maternal_id)
 
 
-# Abacus-Plot erstellen
+# Abacus-Plot of Deviations in BISQ data 
 ggplot(long_BISQ, aes(x = daysF , y = maternal_id)) +
   geom_point(color = "blue") + 
   labs(title = "Deviation of BISQ Data", 
@@ -135,19 +134,17 @@ ggplot(long_BISQ, aes(x = daysF , y = maternal_id)) +
         plot.title = element_text(size = 16, hjust = 0.5))  # Center the title and adjust size
 
 
-#Neuer Datensatz mit DIFF von beiden drin 
+#create data set with both deviations inside 
+#rename deviations
 colnames(long_BISQ)[colnames(long_BISQ) == "diff_type"] <- "diff_typeF"
 colnames(long_Actidates)[colnames(long_Actidates) == "diff_type"] <- "diff_typeA"
-
-
-# Neue Daten zusammenfassen
+# create new data set 
 neuer_datensatz <- long_BISQ %>%
   select(maternal_id, diff_typeF, daysF)%>%
   bind_cols(long_Actidates %>% select(diff_typeA, daysA))
 
 
-# Abacus-Plot erstellen
-# Abacuss-Plot erstellen
+# Abacus-Plot for deviations for both methods 
 ggplot(neuer_datensatz, aes(y = maternal_id)) +
   geom_point(aes(x = daysF, color = "Date BISQ"), position = position_jitter(width = 0.1), size = 1.25) +
   geom_point(aes(x = daysA, color = "Date Acigraphy"), position = position_jitter(width = 0.1), size = 1.25) +
@@ -168,5 +165,7 @@ ggplot(neuer_datensatz, aes(y = maternal_id)) +
 
 ggsave("Abweichungen.png", plot = last_plot(), width = 6, height = 5, dpi = 300)
 
-write.csv2(neuer_datensatz, "Collection_Dates.csv")
+#Create a data set of dates of collection seperatly 
+write.csv2(neuer_datensatz, "Collection_Dates.csv") 
+
 
